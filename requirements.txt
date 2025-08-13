@@ -1,3 +1,4 @@
+yfinance
 streamlit
 pandas
 numpy
@@ -9,3 +10,4 @@ matplotlib
 seaborn
 tensorflow
 xgboost
+
