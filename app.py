@@ -26,41 +26,15 @@ FEATURE_NAMES = [
 @st.cache_data(ttl=3600)
 @st.cache_data(ttl=3600)  # Cache for 1 hour
 def load_data():
+    st.write("Fetching TCS stock data from Yahoo Finance...")
+    df = yf.download("TCS.NS", start="2015-01-01", end=pd.Timestamp.today() + pd.Timedelta(days=1))
+    if df.empty:
+        st.error("Failed to load data. Check connection or ticker.")
+        return None
+    df.index = pd.to_datetime(df.index)
+    return df
     
-    """
-    Load TCS stock data:
-    1. Try live download from Yahoo Finance
-    2. If that fails, fall back to local CSV
-    """
-    # 1. Try to fetch live data from Yahoo Finance
-    try:
-        st.write("📡 Fetching live data from Yahoo Finance...")
-        df = yf.download("TCS.NS", start="2015-01-01", auto_adjust=True, progress=False)
-        if df is not None and not df.empty:
-            st.success(f"✅ Live data loaded: {len(df)} rows, up to {df.index[-1].date()}")
-            return df
-        else:
-            st.warning("⚠ Yahoo Finance returned empty data.")
-    except Exception as e:
-        st.warning(f"❌ Failed to fetch from Yahoo Finance: {e}")
-
-    # 2. Fallback: Load from local CSV
-    try:
-        st.info("📁 Attempting to load backup data from TCS_stock_history.csv")
-        df = pd.read_csv("TCS_stock_history.csv", index_col="Date", parse_dates=True)
-        if df is not None and not df.empty:
-            st.success(f"✅ Backup data loaded: {len(df)} rows, up to {df.index[-1].date()}")
-            return df
-        else:
-            st.error("❌ Backup CSV is empty.")
-    except FileNotFoundError:
-        st.error("❌ Backup file 'TCS_stock_history.csv' not found in the repo.")
-    except Exception as e:
-        st.error(f"❌ Failed to load backup data: {e}")
-
-    # 3. If everything fails
-    st.error("🚨 No data available — cannot proceed.")
-    return None
+   
 
 # ================================
 # Load Models and Scalers
@@ -307,3 +281,4 @@ def main():
 # ================================
 if _name_ == "_main_":
     main()
+
