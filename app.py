@@ -248,11 +248,11 @@ def main():
         st.subheader("Stock Data")
         st.dataframe(df)
         st.download_button(
+            
             label="Download CSV",
             data=df.to_csv(),
-            file_name="tcs_stock_data.csv",
             mime="text/csv"
-        )
+         )
 
     # ================================
     # Model Details
@@ -281,4 +281,5 @@ def main():
 # ================================
 if _name_ == "_main_":
     main()
+
 
